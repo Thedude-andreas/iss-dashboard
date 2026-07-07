@@ -34,13 +34,12 @@ jobs:
           lftp <<EOF
           set cmd:fail-exit yes
           set sftp:auto-confirm yes
+          set xfer:clobber yes
           set net:max-retries 1
           set net:timeout 20
           open -u "$DEPLOY_USER","$DEPLOY_PASS" "sftp://$DEPLOY_HOST:$DEPLOY_PORT"
           cd "$DEPLOY_PATH"
-          cd api
-          mkdir storage || true
-          cd storage
-          put last-urine.json
+          cd api/storage
+          put -O . last-urine.json
           bye
           EOF
