@@ -1,0 +1,29 @@
+# Förhindra att gammal index.html cachas (då får besökare gammal referens till JS med gamla hashi-namn).
+# Hashed assets under t.ex. /assets/… och /sigge-hoppar/assets/… kan cachas länge; filnamnet ändras per build.
+<IfModule mod_headers.c>
+  SetEnvIf Request_URI "(^|/)index\.html$" ncache_index=1
+  Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0" env=ncache_index
+  Header set Pragma "no-cache" env=ncache_index
+</IfModule>
+
+# Redirect all non-file requests to the SPA entrypoint so routes like /iss work on Apache/one.com.
+<IfModule mod_rewrite.c>
+  Options +FollowSymLinks -MultiViews
+  RewriteEngine On
+  RewriteBase /
+
+  # Force HTTP traffic over HTTPS before handling files or SPA routes.
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Never rewrite the actual index.html file
+  RewriteRule ^index\.html$ - [L]
+
+  # Serve existing files or directories (JS chunks, CSS, images, PHP API, etc.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Fallback to index.html for client-side routes
+  RewriteRule . /index.html [L]
+</IfModule>

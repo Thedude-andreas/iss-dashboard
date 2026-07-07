@@ -1,0 +1,51 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to run
+        required: true
+        type: choice
+        default: check
+        options:
+          - check
+          - deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install deploy tools
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Write deploy env
+        run: |
+          cat > .deploy.env <<'EOF'
+          DEPLOY_HOST=${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT=${{ secrets.DEPLOY_PORT }}
+          DEPLOY_USER=${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASS=${{ secrets.SFTP_PASS }}
+          DEPLOY_PATH=${{ secrets.DEPLOY_PATH }}
+          EOF
+
+      - name: Check deploy target
+        run: npm run deploy:check
+
+      - name: Deploy
+        if: ${{ inputs.action == 'deploy' }}
+        run: npm run deploy

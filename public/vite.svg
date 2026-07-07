@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">AMC favicon</title>
+  <desc id="desc">Overlapping AMC letters in a 90s Windows-inspired style.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f0e8"/>
+      <stop offset="1" stop-color="#c8c2b5"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdfcf8"/>
+      <stop offset="0.45" stop-color="#d7d2c8"/>
+      <stop offset="1" stop-color="#8f8a82"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="1.5" dy="2" stdDeviation="1.5" flood-color="#3a3834" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect x="3" y="3" width="58" height="58" rx="8" fill="url(#bg)"/>
+  <rect x="4" y="4" width="56" height="56" rx="7" fill="none" stroke="#fffdf8" stroke-width="2"/>
+  <rect x="4" y="4" width="56" height="56" rx="7" fill="none" stroke="#7c776f" stroke-width="1"/>
+  <g filter="url(#shadow)" fill="url(#steel)" stroke="#4c4a46" stroke-width="1.6" stroke-linejoin="round" font-family="Arial Black, Impact, sans-serif" font-weight="900">
+    <text x="8" y="40" font-size="28">A</text>
+    <text x="20" y="43" font-size="31">M</text>
+    <text x="39" y="46" font-size="29">C</text>
+  </g>
+  <g fill="none" stroke="#fffdf7" stroke-width="1.2" opacity="0.85" stroke-linecap="round">
+    <path d="M14 20l6 0"/>
+    <path d="M27 20l9 0"/>
+    <path d="M46 23l7 0"/>
+  </g>
+</svg>
