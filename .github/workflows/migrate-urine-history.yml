@@ -38,7 +38,9 @@ jobs:
           set net:timeout 20
           open -u "$DEPLOY_USER","$DEPLOY_PASS" "sftp://$DEPLOY_HOST:$DEPLOY_PORT"
           cd "$DEPLOY_PATH"
-          mkdir -p api/storage
-          put -O api/storage last-urine.json
+          cd api
+          mkdir storage || true
+          cd storage
+          put last-urine.json
           bye
           EOF
