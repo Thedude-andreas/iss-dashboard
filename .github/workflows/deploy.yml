@@ -1,9 +1,6 @@
 name: Deploy
 
 on:
-  # One-time repair deployment; removed again after production verification.
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       action:
@@ -17,7 +14,6 @@ on:
 
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'Fix urine collector polling and transient feed outages'
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -58,5 +54,5 @@ jobs:
         run: npm run deploy:check
 
       - name: Deploy
-        if: ${{ inputs.action == 'deploy' || github.event_name == 'push' }}
+        if: ${{ inputs.action == 'deploy' }}
         run: npm run deploy
