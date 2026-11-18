@@ -1,6 +1,9 @@
 name: Deploy
 
 on:
+  # One-time repair deployment; removed again after production verification.
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       action:
@@ -14,6 +17,7 @@ on:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'Fix urine collector polling and transient feed outages'
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -29,6 +33,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check PHP collector
+        run: |
+          php -l public/api/collect-urine.php
+          php -l public/api/lightstreamer.php
+          php tests/collector-test.php
+          php tests/collector-endpoint-test.php
 
       - name: Install deploy tools
         run: sudo apt-get update && sudo apt-get install -y lftp
@@ -47,5 +58,5 @@ jobs:
         run: npm run deploy:check
 
       - name: Deploy
-        if: ${{ inputs.action == 'deploy' }}
+        if: ${{ inputs.action == 'deploy' || github.event_name == 'push' }}
         run: npm run deploy

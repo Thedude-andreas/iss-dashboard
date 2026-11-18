@@ -8,6 +8,27 @@ React/Vite dashboard for selected public International Space Station telemetry f
 - `/api/last-urine.php` - shared timestamp/history persistence for urine tank increases
 - `/api/collect-urine.php` - optional server-side collector endpoint for cron
 
+## Collector behavior
+
+The collector waits for the asynchronous Lightstreamer snapshot and rebinds when
+an initial poll contains only subscription acknowledgements. Requests are bounded
+to about 23 seconds including session cleanup; use a cron timeout of at least
+30 seconds. Sessions are explicitly destroyed after each collection.
+
+A successful observation returns `status: "collected"`, `collected: true`, and
+the persisted snapshot. If the upstream feed is unavailable or has no usable
+value, the endpoint returns HTTP 200 with `status: "skipped"`, `collected: false`,
+`reason`, `stage`, and `checkedAt`. It logs the reason to PHP's error log and
+leaves history and the last tank value untouched. HTTP 200 means the scheduled
+attempt completed, **not** that fresh telemetry was received. Consumers monitoring
+data health must check `collected`. This lets cron-job.org continue trying through
+long feed outages instead of disabling the job after 26 failed HTTP requests.
+Local storage failures still return HTTP 500.
+
+Run backend regression tests with `php tests/collector-test.php` and
+`php tests/collector-endpoint-test.php`. Existing disabled
+cron-job.org jobs must be re-enabled once after deploying this fix.
+
 ## Local Development
 
 ```bash
